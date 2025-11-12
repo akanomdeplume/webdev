@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spinning Image</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: rgb(255, 0, 0);
+      margin: 0;
+    }
+
+    h1, input {
+      transition: opacity 0.5s ease;
+    }
+
+    img {
+      width: 300px;
+      height: 300px;
+      object-fit: contain;
+      animation: spin 3s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>image that spins by me</h1>
+  <input type="file" id="imageInput" accept="image/*">
+  <img id="displayImage">
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const displayImage = document.getElementById('displayImage');
+    const header = document.querySelector('h1');
+
+    imageInput.addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          displayImage.src = e.target.result;
+          header.style.opacity = 0;
+          imageInput.style.opacity = 0;
+
+          setTimeout(() => {
+            header.style.display = 'none';
+            imageInput.style.display = 'none';
+            displayImage.style.display = 'block';
+          }, 500);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

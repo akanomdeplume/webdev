@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dino Jumper (Fixed Dino)</title>
+<style>
+    body {
+        background: #eee;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+    }
+
+    #game {
+        width: 700px;
+        height: 250px;
+        background: #fff;
+        border: 2px solid #222;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* GUARANTEED visible dino */
+    #dino {
+        width: 50px;
+        height: 50px;
+        background: #222; /* simple square, always shows */
+        position: absolute;
+        bottom: 0;
+        left: 60px;
+    }
+
+    #cactus {
+        width: 25px;
+        height: 60px;
+        background: green;
+        position: absolute;
+        bottom: 0;
+        right: -40px;
+    }
+
+    /* non-gory explosion puff */
+    .explode {
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(255,0,0,0.8), rgba(90,0,0,0.5));
+        position: absolute;
+        border-radius: 50%;
+        animation: explodeAnim 0.35s ease-out forwards;
+    }
+
+    @keyframes explodeAnim {
+        0% { transform: scale(0.3); opacity: 1; }
+        100% { transform: scale(1.9); opacity: 0; }
+    }
+
+    #score {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div id="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+    <div id="score">Score: 0</div>
+</div>
+
+<script>
+    const dino = document.getElementById("dino");
+    const cactus = document.getElementById("cactus");
+    const scoreDisplay = document.getElementById("score");
+    const game = document.getElementById("game");
+
+    let isJumping = false;
+    let jumpHeight = 0;
+    let score = 0;
+    let speed = 6;
+
+    // Jump input
+    document.addEventListener("keydown", jump);
+    document.addEventListener("touchstart", jump);
+
+    function jump() {
+        if (isJumping) return;
+        isJumping = true;
+
+        let up = setInterval(() => {
+            if (jumpHeight >= 120) {
+                clearInterval(up);
+                let down = setInterval(() => {
+                    if (jumpHeight <= 0) {
+                        clearInterval(down);
+                        isJumping = false;
+                    }
+                    jumpHeight -= 5;
+                    dino.style.bottom = jumpHeight + "px";
+                }, 15);
+            }
+            jumpHeight += 5;
+            dino.style.bottom = jumpHeight + "px";
+        }, 15);
+    }
+
+    let cactusLeft = 700;
+
+    function gameLoop() {
+        cactusLeft -= speed;
+
+        if (cactusLeft < -40) {
+            cactusLeft = 700;
+            score++;
+            scoreDisplay.textContent = "Score: " + score;
+            speed += 0.3;
+        }
+
+        cactus.style.left = cactusLeft + "px";
+
+        let dinoBottom = parseInt(window.getComputedStyle(dino).bottom);
+
+        if (cactusLeft > 50 && cactusLeft < 90 && dinoBottom < 40) {
+            explode();
+            return;
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    function explode() {
+        const boom = document.createElement("div");
+        boom.className = "explode";
+        boom.style.left = (dino.offsetLeft - 30) + "px";
+        boom.style.bottom = (dino.offsetTop - 30) + "px";
+        game.appendChild(boom);
+
+        dino.style.display = "none";
+
+        setTimeout(() => {
+            alert("Game Over! Score: " + score);
+            location.reload();
+        }, 350);
+    }
+
+    gameLoop();
+</script>
+
+</body>

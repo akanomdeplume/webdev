@@ -1,0 +1,37 @@
+<DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block content %}{% endblock %}</title>
+        <style>
+            img{
+                height: 110%;
+                width: auto;
+
+            }
+            #nav {
+                margin-bottom: 20px;
+            }
+            #nav a {
+                text-decoration: none;
+                color: blueviolet;
+                font-weight: bold;   
+            }
+
+            #nav a:hover {
+                text-decoration: underline;
+
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Agartha</h1>
+        <div id ="nav">
+            <a href="/">Home</a>
+            <a href="/contact">contact</a>
+            <a href="/about">about</a>
+        </div>
+        {% block body %}{% endblock %}
+    </body>
+    </html>
